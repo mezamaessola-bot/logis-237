@@ -1,0 +1,22 @@
+CREATE DATABASE IF NOT EXISTS logis237_db CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+USE logis237_db;
+CREATE TABLE parametres(id INT PRIMARY KEY AUTO_INCREMENT,taux_commission DECIMAL(5,2) NOT NULL DEFAULT 10.00);
+INSERT INTO parametres(taux_commission) VALUES(10.00);
+CREATE TABLE utilisateurs(id INT PRIMARY KEY AUTO_INCREMENT,nom VARCHAR(100) NOT NULL,telephone VARCHAR(20) NOT NULL UNIQUE,mot_de_passe VARCHAR(255) NOT NULL,role ENUM('proprietaire','admin') NOT NULL DEFAULT 'proprietaire',num_om VARCHAR(20) NULL,num_momo VARCHAR(20) NULL,tentatives INT NOT NULL DEFAULT 0,bloque_jusqua DATETIME NULL,date_inscription DATETIME DEFAULT CURRENT_TIMESTAMP);
+CREATE TABLE villes(id INT PRIMARY KEY AUTO_INCREMENT,nom VARCHAR(100) NOT NULL UNIQUE,lat DECIMAL(10,7) NOT NULL,lng DECIMAL(10,7) NOT NULL);
+CREATE TABLE quartiers(id INT PRIMARY KEY AUTO_INCREMENT,ville_id INT NOT NULL,nom VARCHAR(100) NOT NULL,lat DECIMAL(10,7) NOT NULL,lng DECIMAL(10,7) NOT NULL,FOREIGN KEY(ville_id) REFERENCES villes(id) ON DELETE CASCADE,INDEX(ville_id));
+CREATE TABLE secteurs(id INT PRIMARY KEY AUTO_INCREMENT,quartier_id INT NOT NULL,nom VARCHAR(100) NOT NULL,FOREIGN KEY(quartier_id) REFERENCES quartiers(id) ON DELETE CASCADE);
+CREATE TABLE annonces(id INT PRIMARY KEY AUTO_INCREMENT,utilisateur_id INT NOT NULL,titre VARCHAR(150) NOT NULL,type_transaction ENUM('location','vente') NOT NULL,type_bien ENUM('studio','1_chambre','2_chambres','3_chambres_plus','terrain','maison_vente') NOT NULL,ville_id INT NOT NULL,quartier_id INT NOT NULL,secteur VARCHAR(100) NULL,prix BIGINT NOT NULL,caution BIGINT NOT NULL DEFAULT 0,superficie INT NULL,douches INT NOT NULL DEFAULT 1,equipements TEXT NULL,description TEXT NOT NULL,accepte_om TINYINT(1) NOT NULL DEFAULT 0,accepte_momo TINYINT(1) NOT NULL DEFAULT 0,taux_commission_accepte DECIMAL(5,2) NOT NULL,date_acceptation_commission DATETIME NOT NULL,statut ENUM('en_ligne','retiree','conclue') NOT NULL DEFAULT 'en_ligne',lat DECIMAL(10,7) NULL,lng DECIMAL(10,7) NULL,date_publication DATETIME DEFAULT CURRENT_TIMESTAMP,
+FOREIGN KEY(utilisateur_id) REFERENCES utilisateurs(id) ON DELETE CASCADE,FOREIGN KEY(ville_id) REFERENCES villes(id),FOREIGN KEY(quartier_id) REFERENCES quartiers(id),
+INDEX idx_liste(statut,date_publication),INDEX idx_filtre(ville_id,quartier_id,type_transaction,type_bien,prix));
+CREATE TABLE photos(id INT PRIMARY KEY AUTO_INCREMENT,annonce_id INT NOT NULL,chemin VARCHAR(255) NOT NULL,ordre INT NOT NULL DEFAULT 1,FOREIGN KEY(annonce_id) REFERENCES annonces(id) ON DELETE CASCADE,INDEX(annonce_id));
+INSERT INTO villes(id,nom,lat,lng) VALUES(1,'Yaoundé',3.8480325,11.5020752),(2,'Douala',4.0510564,9.7678687);
+INSERT INTO quartiers(id,ville_id,nom,lat,lng) VALUES
+(1,1,'Bastos',3.8936,11.5117),(2,1,'Omnisport',3.8833,11.5417),(3,1,'Essos',3.8722,11.5425),(4,1,'Ekounou',3.8475,11.5350),(5,1,'Mvan',3.8250,11.5167),(6,1,'Mendong',3.8389,11.4694),(7,1,'Nsimeyong',3.8333,11.4917),(8,1,'Odza',3.8000,11.5333),(9,1,'Biyem-Assi',3.8381,11.4833),(10,1,'Emana',3.9222,11.5222),(11,1,'Mimboman',3.8667,11.5667),
+(12,2,'Bonapriso',4.0250,9.7000),(13,2,'Akwa',4.0450,9.6950),(14,2,'Bonamoussadi',4.0889,9.7389),(15,2,'Makepe',4.0750,9.7500),(16,2,'Deido',4.0625,9.7083),(17,2,'Logbessou',4.0833,9.7833);
+INSERT INTO secteurs(quartier_id,nom) VALUES(1,'Nouvelle Route Bastos'),(1,'Carrefour Bastos'),(8,'Borne 10'),(14,'Carrefour Maçon');
+INSERT INTO utilisateurs(id,nom,telephone,mot_de_passe,role) VALUES(1,'Administrateur','000000000','!','admin');
+INSERT INTO annonces(utilisateur_id,titre,type_transaction,type_bien,ville_id,quartier_id,secteur,prix,caution,superficie,douches,equipements,description,accepte_om,accepte_momo,taux_commission_accepte,date_acceptation_commission) VALUES
+(1,'Studio haut standing','location','studio',1,1,'Nouvelle Route Bastos',300000,280000,NULL,2,'Eau chaude, Forage, Groupe électrogène, Compteur prépayé, Gardien, Placards','1 chambre avec placards, 2 douches avec eau chaude, cuisine avec rangement, salon lumineux, compteur prépayé, groupe électrogène, forage, gardien.',1,1,10,NOW()),
+(1,'Appartement 2 chambres à Mvan','location','2_chambres',1,5,NULL,150000,300000,NULL,1,'Forage, Compteur prépayé, Parking','Appartement lumineux au 1er étage, carrelé, proche de la route principale.',1,0,10,NOW()),
+(1,'Terrain titré de 500 m²','vente','terrain',2,14,'Carrefour Maçon',18000000,0,500,0,'','Terrain plat avec titre foncier, accès goudronné, idéal pour construction.',0,1,10,NOW());

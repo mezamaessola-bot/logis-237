@@ -1,0 +1,11 @@
+LOGIS237 – comment l’installer avec WampServer
+1. Copie le dossier "logis237" dans  C:\wamp64\www\
+2. Lance WampServer (icône verte).
+3. Ouvre le navigateur sur  http://localhost/logis237/
+4. Onglet Connexion > Administrateur : crée ton code la première fois.
+
+Dossiers :
+- index.html     la page
+- css/style.css  les couleurs et le design
+- js/app.js      l’affichage et les actions
+- js/api.js      les données (pour l’instant dans le navigateur ; on le branchera sur MySQL ensuite)

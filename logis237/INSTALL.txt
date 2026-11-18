@@ -1,0 +1,9 @@
+INSTALLATION - Logis237 (WampServer)
+1. Copiez ce dossier dans C:\wamp64\www\logis237\ (démarrez WampServer, icône verte).
+2. Vérifiez PHP > Extensions PHP : gd et fileinfo cochées. Version PHP 8 conseillée.
+3. http://localhost/phpmyadmin > onglet SQL > collez le contenu de database.sql > Exécuter.
+4. Si votre MySQL a un mot de passe root, modifiez config/db.php.
+5. Ouvrez http://localhost/logis237/setup_admin.php : créez votre compte administrateur (téléphone + mot de passe), puis SUPPRIMEZ setup_admin.php.
+6. Connectez-vous sur http://localhost/logis237/connexion.php.
+7. Placez votre logo dans assets/img/logo.png (affiché dans l'en-tête).
+Pour mettre en ligne : changez les identifiants MySQL dans config/db.php et utilisez HTTPS.
